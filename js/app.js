@@ -19,9 +19,8 @@ const hide = el => el && (el.hidden = true);
 
 /* ── Tab Switching (global for inline onclick) ── */
 window.switchTab = function(tab) {
-  // If moving to diary, show ad first (only if not already there)
   if (tab === 'diary' && !$('panelDiary').classList.contains('active')) {
-    showInterstitial(() => {
+    window.showInterstitial(() => {
       actuallySwitchTab('diary');
     }, 'Open My Diary →');
   } else {
@@ -37,7 +36,7 @@ function actuallySwitchTab(tab) {
     if (tabEl)   tabEl.classList.toggle('active',   t === tab);
     if (panelEl) panelEl.classList.toggle('active', t === tab);
   });
-  if (tab === 'diary') renderDiaryList();
+  if (tab === 'diary') window.renderDiaryList();
 }
 
 window.closeSetupModal = () => hide($('setupModal'));
@@ -269,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
     App.currentNotes = $('notesInput').value.trim();
     hide($('stepUpload')); hide($('statsSection')); hide($('stepNotes'));
     showLoadingSection();
-    showInterstitial(callGemini, 'Continue to Analysis →');
+    window.showInterstitial(callGemini, 'Continue to Analysis →');
   }
 
   function showLoadingSection() {
@@ -284,10 +283,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (iv) clearInterval(iv);
     hide($('loadingSection'));
   }
-}); // end DOMContentLoaded
 
   /* ── Interstitial Ad ───────────────────────── */
-  function showInterstitial(onFinish, skipLabel = 'Continue →') {
+  window.showInterstitial = function(onFinish, skipLabel = 'Continue →') {
     show($('interstitialAd'));
     let t = 5;
     $('adCountdown').textContent = '0' + t;
@@ -407,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ── Diary List ────────────────────────────── */
-  function renderDiaryList() {
+  window.renderDiaryList = function() {
     const entries = Diary.getAll();
     const container = $('diaryList');
     hide($('diaryDetail'));
@@ -528,7 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Diary.remove(id);
     hide($('diaryDetail'));
     show($('diaryList'));
-    renderDiaryList();
+    window.renderDiaryList();
   };
 
   $('btnBackDiary').addEventListener('click', () => {
@@ -543,14 +541,13 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const count = await Diary.importJSON(file);
       alert(`✓ Imported ${count} sessions successfully.`);
-      renderDiaryList();
+      window.renderDiaryList();
     } catch(err) { alert('Import failed: ' + err.message); }
     e.target.value = '';
   });
 
   /* ── Bootstrap ─────────────────────────────── */
-  // Bootstrap runs after script load
   document.addEventListener('DOMContentLoaded', () => {
     updateKeyUI();
-    renderDiaryList(); 
+    window.renderDiaryList(); 
   });
