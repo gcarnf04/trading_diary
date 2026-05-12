@@ -62,17 +62,18 @@ code { font-family: 'JetBrains Mono', monospace; }
   border-radius: 4px; padding: 1px 6px;
 }
 
-/* Key status bar */
-.key-bar {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: 8px; padding: 6px 12px; cursor: pointer;
-  transition: var(--transition); font-size: 13px;
+/* Key status area (ecosystem shared) */
+.api-key-area { display: flex; align-items: center; gap: 10px; }
+.api-key-status { display: flex; align-items: center; gap: 6px; }
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--text-3);
+  transition: background var(--transition);
 }
-.key-bar:hover { border-color: var(--accent); }
-.status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-3); flex-shrink: 0; }
-.status-dot.active { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.status-dot.active { background: var(--green); box-shadow: 0 0 8px var(--green); }
 .status-dot.error  { background: var(--red); }
+.status-label { font-size: 13px; color: var(--text-2); }
 
 /* ── Tabs ─────────────────────────────────────────────────── */
 .tab-bar {
@@ -282,11 +283,11 @@ select.input-select:focus { outline: none; border-color: var(--accent); }
 .input-group { display: flex; gap: 8px; margin-bottom: 16px; }
 .input-group .input-field { flex: 1; }
 .btn-icon {
-  background: var(--bg-1); border: 1px solid var(--border);
-  border-radius: 8px; padding: 0 12px; color: var(--text-2); cursor: pointer;
-  transition: var(--transition);
+  background: none; border: none;
+  border-radius: 8px; padding: 6px; color: var(--text-2); cursor: pointer;
+  transition: var(--transition); display: inline-flex;
 }
-.btn-icon:hover { color: var(--text-1); }
+.btn-icon:hover { background: var(--bg-hover); color: var(--text-1); }
 
 .pin-inputs { display: flex; gap: 10px; justify-content: center; margin: 16px 0; }
 .pin-input {

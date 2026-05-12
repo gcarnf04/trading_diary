@@ -54,21 +54,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ── Key Status UI ─────────────────────────── */
   function updateKeyUI() {
-    const dot   = $('keyDot');
-    const label = $('keyLabel');
+    const dot   = $('statusDot');
+    const label = $('statusLabel');
+    const btn   = $('btnToggleApiKey');
     if (Vault.isUnlocked()) {
       App.apiKey = Vault.getUnlockedKey();
       dot.className = 'status-dot active';
       label.textContent = 'API Key loaded';
+      btn.textContent = 'Change key';
     } else if (Vault.hasStoredKey()) {
       App.apiKey = null;
       dot.className = 'status-dot';
-      label.textContent = 'Key saved — enter PIN';
+      label.textContent = 'Key saved — unlock';
+      btn.textContent = 'Unlock';
       openLoginModal();
     } else {
       App.apiKey = null;
       dot.className = 'status-dot error';
-      label.textContent = 'No API Key';
+      label.textContent = 'No API key';
+      btn.textContent = 'Set key';
     }
     updateAnalyzeBtn();
   }
@@ -78,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn) btn.disabled = !App.apiKey || !App.currentStats;
   }
 
-  $('keyBar').addEventListener('click', () => {
+  $('btnToggleApiKey').addEventListener('click', () => {
     if (Vault.hasStoredKey() && !Vault.isUnlocked()) openLoginModal();
     else openSetupModal();
   });
