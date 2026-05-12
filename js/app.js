@@ -19,6 +19,17 @@ const hide = el => el && (el.hidden = true);
 
 /* ── Tab Switching (global for inline onclick) ── */
 window.switchTab = function(tab) {
+  // If moving to diary, show ad first (only if not already there)
+  if (tab === 'diary' && !$('panelDiary').classList.contains('active')) {
+    showInterstitial(() => {
+      actuallySwitchTab('diary');
+    }, 'Open My Diary →');
+  } else {
+    actuallySwitchTab(tab);
+  }
+};
+
+function actuallySwitchTab(tab) {
   ['new','diary'].forEach(t => {
     const capT = t.charAt(0).toUpperCase() + t.slice(1);
     const tabEl   = $('tab'   + capT);
@@ -27,7 +38,7 @@ window.switchTab = function(tab) {
     if (panelEl) panelEl.classList.toggle('active', t === tab);
   });
   if (tab === 'diary') renderDiaryList();
-};
+}
 
 window.closeSetupModal = () => hide($('setupModal'));
 window.closeLoginModal = () => hide($('loginModal'));
@@ -258,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
     App.currentNotes = $('notesInput').value.trim();
     hide($('stepUpload')); hide($('statsSection')); hide($('stepNotes'));
     showLoadingSection();
-    showInterstitial();
+    showInterstitial(callGemini, 'Continue to Analysis →');
   }
 
   function showLoadingSection() {
@@ -275,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ── Interstitial Ad ───────────────────────── */
-  function showInterstitial() {
+  function showInterstitial(onFinish, skipLabel = 'Continue →') {
     show($('interstitialAd'));
     let t = 5;
     $('adCountdown').textContent = '0' + t;
@@ -288,14 +299,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (t <= 0) {
         clearInterval(iv);
         $('btnSkipAd').disabled = false;
-        $('btnSkipAd').textContent = 'Continue to Analysis →';
+        $('btnSkipAd').textContent = skipLabel;
       }
     }, 1000);
 
     $('btnSkipAd').onclick = async () => {
       if ($('btnSkipAd').disabled) return;
       hide($('interstitialAd'));
-      await callGemini();
+      if (onFinish) await onFinish();
     };
   }
 
