@@ -84,13 +84,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ── Setup Modal ───────────────────────────── */
-  function openSetupModal() {
+  window.openSetupModal = function() {
     show($('setupModal'));
     $('modalApiKeyInput').value = '';
     $('setupError').textContent = '';
     [...document.querySelectorAll('#setupPins .pin-input')].forEach(p => p.value = '');
+    $('btnClearKey').style.display = Vault.hasStoredKey() ? 'block' : 'none';
     setTimeout(() => $('modalApiKeyInput').focus(), 50);
-  }
+  };
+
+  $('btnClearKey')?.addEventListener('click', () => {
+    if (!confirm('Are you sure you want to delete your saved API Key? You will need to enter it again.')) return;
+    Vault.clearKey();
+    App.apiKey = null;
+    window.closeSetupModal();
+    updateKeyUI();
+  });
 
   $('btnToggleKey').addEventListener('click', () => {
     const i = $('modalApiKeyInput');
