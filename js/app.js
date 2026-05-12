@@ -165,36 +165,11 @@ document.addEventListener('DOMContentLoaded', () => {
         App.parsedCSV = { text: e.target.result, fields: result.meta.fields };
         showFileBadge(file.name);
         populateColMap(result.meta.fields);
-        autoMapColumns(result.meta.fields);
       } catch(err) { alert('Could not parse CSV: ' + err.message); }
     };
     reader.readAsText(file);
   }
 
-  function autoMapColumns(fields) {
-    const keywords = {
-      pnl:   ['profit', 'pnl', 'gain', 'net', 'amount', 'usd', 'ganancia', 'pl', 'p/l', 'lucro'],
-      price: ['price', 'open', 'entry', 'strike', 'precio', 'entrada', 'avg'],
-      time:  ['time', 'date', 'open', 'timestamp', 'hora', 'fecha']
-    };
-
-    const findBest = (targetKeys) => {
-      return fields.find(f => {
-        const low = f.toLowerCase();
-        return targetKeys.some(k => low.includes(k));
-      }) || '';
-    };
-
-    const pnlMatch   = findBest(keywords.pnl);
-    const priceMatch = findBest(keywords.price);
-    const timeMatch  = findBest(keywords.time);
-
-    if (pnlMatch)   $('colPnL').value   = pnlMatch;
-    if (priceMatch) $('colPrice').value = priceMatch;
-    if (timeMatch)  $('colTime').value  = timeMatch;
-
-    if (pnlMatch) $('btnProcessCSV').click();
-  }
 
   function showFileBadge(name) {
     const badge = $('fileBadge');
@@ -211,17 +186,38 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   function populateColMap(fields) {
+    // Heuristic keyword sets
+    const keywords = {
+      pnl:   /pnl|profit|net|gain|p&l|usd|lucro|ganancia|amount/i,
+      price: /price|entry|open|strike|entrada|avg|precio/i,
+      time:  /time|date|hour|ts|timestamp|hora|fecha/i
+    };
+
     ['colPnl','colPrice','colTime'].forEach(id => {
       const sel = $(id);
       sel.innerHTML = '<option value="">— select —</option>' +
         fields.map(f => `<option value="${f}">${f}</option>`).join('');
     });
-    const pnlG   = fields.find(f => /pnl|profit|net|gain|p&l/i.test(f));
-    const priceG = fields.find(f => /price|entry|open/i.test(f));
-    const timeG  = fields.find(f => /time|date|hour|ts/i.test(f));
-    if (pnlG)   $('colPnl').value   = pnlG;
-    if (priceG) $('colPrice').value = priceG;
-    if (timeG)  $('colTime').value  = timeG;
+
+    const pnlMatch   = fields.find(f => keywords.pnl.test(f));
+    const priceMatch = fields.find(f => keywords.price.test(f));
+    const timeMatch  = fields.find(f => keywords.time.test(f));
+
+    if (pnlMatch)   $('colPnl').value   = pnlMatch;
+    if (priceMatch) $('colPrice').value = priceMatch;
+    if (timeMatch)  $('colTime').value  = timeMatch;
+
+    // Show/hide auto-detect feedback
+    const hint = $('colMapHint');
+    if (pnlMatch) {
+      hint.textContent = '✓ Columns auto-detected. Review below and proceed.';
+      hint.style.color = 'var(--green)';
+      // Auto-trigger stats if all required found
+      setTimeout(() => $('btnCalcStats').click(), 100);
+    } else {
+      hint.textContent = '⚠ Could not detect PnL column automatically. Please select it below.';
+      hint.style.color = 'var(--yellow)';
+    }
   }
 
   $('btnCalcStats').addEventListener('click', () => {

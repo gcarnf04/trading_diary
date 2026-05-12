@@ -131,10 +131,10 @@
       <!-- Column Mapping (shown after file loaded) -->
       <div id="colMapSection" hidden>
         <div class="divider"></div>
-        <p class="text-small text-muted mb-16">Map your CSV columns so we can calculate statistics:</p>
+        <p id="colMapHint" class="text-small mb-16" style="min-height: 18px;"></p>
         <div class="col-map-grid">
           <div class="col-map-group">
-            <label>PnL Column *</label>
+            <label>PnL Column <span style="color:var(--accent)">*</span></label>
             <select class="input-select" id="colPnl"></select>
           </div>
           <div class="col-map-group">
