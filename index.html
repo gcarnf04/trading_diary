@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session Debrief AI — Trading Psychology Analyzer</title>
+  <meta name="description" content="Analyze your trading session with AI. Get a brutal, honest psychological debrief. Your private diary — all local, no server." />
+
+  <!-- AdSense — commons.md spec -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2977545376736575" crossorigin="anonymous"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+  <!-- CDN Libraries loaded at end of body -->
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a0d14'/><text x='4' y='24' font-size='20'>📊</text></svg>" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="app-wrapper">
+
+  <!-- ═══════════════════ HEADER ═══════════════════ -->
+  <header class="app-header">
+    <div class="container header-inner">
+      <div class="logo">
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="6" fill="#0a0d14"/>
+          <path d="M6 22 L10 16 L14 18 L18 10 L22 14 L26 8" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="26" cy="8" r="2.5" fill="#00d4ff"/>
+        </svg>
+        <span class="logo-text">Session Debrief AI</span>
+        <span class="logo-badge">beta</span>
+      </div>
+
+      <div class="key-bar" id="keyBar">
+        <span class="status-dot error" id="keyDot"></span>
+        <span id="keyLabel">No API Key</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════ TAB BAR ═══════════════════ -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" id="tabNew" onclick="switchTab('new')">📊 New Analysis</button>
+    <button class="tab-btn" id="tabDiary" onclick="switchTab('diary')">📖 My Diary</button>
+  </nav>
+
+  <!-- ═══════════════════ AD BANNER TOP ═══════════════════ -->
+  <div class="container">
+    <div class="ad-banner" aria-label="Advertisement">
+      <!-- INSERTA AQUÍ TU SCRIPT DE GOOGLE ADSENSE -->
+      Advertisement
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       TAB: NEW ANALYSIS
+  ════════════════════════════════════════════════════════ -->
+  <main class="tab-panel active container" id="panelNew">
+
+    <!-- Step 1: CSV Upload -->
+    <section class="card mb-16" id="stepUpload">
+      <div class="card-title">Step 1 — Upload your broker CSV</div>
+      <div class="card-sub">Drag & drop your trade export. Data is processed locally — never sent to any server.</div>
+
+      <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload CSV">
+        <div>
+          <svg viewBox="0 0 48 48" fill="none" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 32V16M16 24l8-8 8 8" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8 36a8 8 0 0 1 0-16h2a12 12 0 0 1 23.6-2.4A8 8 0 1 1 40 36H8Z" stroke="#00d4ff" stroke-width="1.5" opacity=".5" stroke-linejoin="round"/>
+          </svg>
+          <p class="drop-title">Drop your CSV here</p>
+          <p class="drop-sub">or <label for="csvFileInput" class="drop-link">browse files</label></p>
+          <p class="drop-hint">.csv · .tsv · broker export</p>
+        </div>
+        <input type="file" id="csvFileInput" accept=".csv,.tsv" hidden />
+      </div>
+      <div id="fileBadge" hidden></div>
+
+      <!-- Column Mapping (shown after file loaded) -->
+      <div id="colMapSection" hidden>
+        <div class="divider"></div>
+        <p class="text-small text-muted mb-16">Map your CSV columns so we can calculate statistics:</p>
+        <div class="col-map-grid">
+          <div class="col-map-group">
+            <label>PnL Column *</label>
+            <select class="input-select" id="colPnl"></select>
+          </div>
+          <div class="col-map-group">
+            <label>Price Column</label>
+            <select class="input-select" id="colPrice"></select>
+          </div>
+          <div class="col-map-group">
+            <label>Time Column</label>
+            <select class="input-select" id="colTime"></select>
+          </div>
+        </div>
+        <button class="btn-ghost btn-sm mt-12" id="btnCalcStats">Calculate Statistics →</button>
+      </div>
+    </section>
+
+    <!-- Stats Preview -->
+    <section id="statsSection" hidden class="mb-16">
+      <div class="section-header">
+        <span class="section-title">Session Statistics</span>
+        <span class="text-small text-muted" id="statsDate"></span>
+      </div>
+      <div class="stats-grid" id="statsGrid"></div>
+    </section>
+
+    <!-- Step 2: Emotional Notes -->
+    <section class="card mb-16" id="stepNotes" hidden>
+      <div class="card-title">Step 2 — Emotional Debrief Notes</div>
+      <div class="card-sub">Describe how you felt today. What triggered your decisions? Be honest.</div>
+      <textarea
+        class="input-textarea"
+        id="notesInput"
+        placeholder="e.g. I was up 2% but wanted more. Held a losing position too long because I was sure it would reverse. Felt fear of missing out on the afternoon breakout..."
+        rows="6"
+      ></textarea>
+      <button class="btn-primary btn-full mt-12" id="btnAnalyze" disabled>
+        🔍 Run AI Debrief
+      </button>
+    </section>
+
+    <!-- Loading State -->
+    <section id="loadingSection" hidden>
+      <div class="loading-card">
+        <div class="loading-orb"></div>
+        <p class="loading-status" id="loadingStatus">Analyzing session…</p>
+        <p class="loading-sub" id="loadingSub">Preparing psychological profile…</p>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section id="resultsSection" hidden>
+
+      <!-- Gauge -->
+      <div class="card text-center mb-16">
+        <div class="gauge-wrapper">
+          <svg class="gauge-svg" viewBox="0 0 200 110" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#1e2a3a" stroke-width="16" stroke-linecap="round"/>
+            <path id="gaugeFill" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#00d4ff" stroke-width="16" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+          </svg>
+          <div class="gauge-center">
+            <div class="gauge-score" id="gaugeScore">—</div>
+            <div class="gauge-grade" id="gaugeGrade">Discipline Score</div>
+          </div>
+        </div>
+        <p id="verdictBrief" class="text-muted text-small mt-8"></p>
+      </div>
+
+      <!-- Brutal Summary -->
+      <div class="report-card">
+        <div class="report-section">
+          <h3>⚡ Brutal Summary</h3>
+          <div class="brutal-summary" id="brutalSummary"></div>
+        </div>
+
+        <!-- Ad Square — below verdict, commons.md spec -->
+        <div class="ad-square" aria-label="Advertisement">
+          <!-- INSERTA AQUÍ TU SCRIPT DE GOOGLE ADSENSE -->
+          Advertisement
+        </div>
+
+        <div class="report-section">
+          <h3>🔴 Detected Trading Sins</h3>
+          <ul class="sins-list" id="sinsList"></ul>
+        </div>
+
+        <div class="report-section">
+          <h3>✅ Action Plan for Tomorrow</h3>
+          <div class="action-plan" id="actionPlan"></div>
+        </div>
+      </div>
+
+      <!-- Share buttons -->
+      <div class="share-btn-row mt-16">
+        <button class="btn-primary" id="btnShare">📸 Share my Debrief</button>
+        <button class="btn-ghost" id="btnNewAnalysis">🔄 New Analysis</button>
+      </div>
+      <canvas id="shareCanvas"></canvas>
+
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════
+       TAB: MY DIARY
+  ════════════════════════════════════════════════════════ -->
+  <main class="tab-panel container" id="panelDiary">
+
+    <div class="section-header mt-16">
+      <span class="section-title">📖 My Diary</span>
+      <div class="flex gap-8">
+        <button class="btn-ghost btn-sm" id="btnExport">⬇ Backup</button>
+        <label class="btn-ghost btn-sm" style="cursor:pointer;" for="importInput">⬆ Import</label>
+        <input type="file" id="importInput" accept=".json" hidden />
+      </div>
+    </div>
+
+    <!-- Diary list will be rendered here by JS -->
+    <div id="diaryList"></div>
+
+    <!-- Diary Detail View (shown when clicking an entry) -->
+    <div id="diaryDetail" hidden>
+      <button class="btn-ghost btn-sm mb-16" id="btnBackDiary">← Back to Diary</button>
+      <div id="diaryDetailContent"></div>
+    </div>
+
+  </main>
+
+  <!-- ═══════════════════ FOOTER ═══════════════════ -->
+  <footer class="app-footer">
+    <p>⚠ <strong>Legal Disclaimer:</strong> Session Debrief AI is an educational AI-based simulation tool. It does not constitute financial advice. Trading carries a high risk of capital loss.</p>
+    <p class="mt-4">
+      <a href="https://gcarnf04.github.io/">More Tools</a> ·
+      <a href="https://gcarnf04.github.io/trade_scorer/">Trade Setup Scorer</a>
+    </p>
+  </footer>
+
+</div><!-- /app-wrapper -->
+
+<!-- ═══════════════════════════════════════════════════════
+     MODAL: Setup API Key
+════════════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="setupModal" hidden>
+  <div class="modal">
+    <button class="modal-close" onclick="closeSetupModal()">✕</button>
+    <div class="modal-title">🔑 Set up your Gemini API Key</div>
+    <div class="modal-desc">
+      You need a <strong>Gemini Key</strong> (starts with <code>AIza</code>).<br>
+      We'll encrypt it with your PIN. It never leaves your device except to call Google.<br>
+      <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Get your free key at Google AI Studio →</a>
+    </div>
+    <div class="input-group">
+      <input class="input-field" type="password" id="modalApiKeyInput" placeholder="AIzaSy…" autocomplete="off" />
+      <button class="btn-icon" id="btnToggleKey" title="Show / hide">👁</button>
+    </div>
+    <label style="display:block;font-size:13px;color:var(--text-2);text-align:center;margin-bottom:8px;">Create a 4-digit PIN</label>
+    <div class="pin-inputs" id="setupPins">
+      <input class="pin-input" type="text" inputmode="numeric" maxlength="1"/>
+      <input class="pin-input" type="text" inputmode="numeric" maxlength="1"/>
+      <input class="pin-input" type="text" inputmode="numeric" maxlength="1"/>
+      <input class="pin-input" type="text" inputmode="numeric" maxlength="1"/>
+    </div>
+    <div class="modal-error" id="setupError"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost btn-full" onclick="closeSetupModal()">Cancel</button>
+      <button class="btn-primary btn-full" id="btnSaveKey">Save & Activate</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     MODAL: Login with PIN
+════════════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="loginModal" hidden>
+  <div class="modal" style="text-align:center;">
+    <button class="modal-close" onclick="closeLoginModal()">✕</button>
+    <div class="modal-title">🔒 Enter your PIN</div>
+    <div class="modal-desc">You have a saved key. Unlock it with your 4-digit PIN.</div>
+    <div class="pin-inputs" id="loginPins">
+      <input class="pin-input" type="text" inputmode="numeric" maxlength="1"/>
+      <input class="pin-input" type="text" inputmode="numeric" maxlength="1"/>
+      <input class="pin-input" type="text" inputmode="numeric" maxlength="1"/>
+      <input class="pin-input" type="text" inputmode="numeric" maxlength="1"/>
+    </div>
+    <div class="modal-error" id="loginError"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost btn-full" onclick="closeLoginModal()">Cancel</button>
+      <button class="btn-primary btn-full" id="btnUnlock">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     INTERSTITIAL AD (shown during AI analysis)
+════════════════════════════════════════════════════════ -->
+<div class="interstitial-backdrop" id="interstitialAd" hidden>
+  <div class="interstitial-content">
+    <div class="interstitial-header">
+      <span>Advertisement</span>
+      <span class="interstitial-countdown" id="adCountdown">05</span>
+    </div>
+    <div class="ad-placeholder-full">
+      <!-- INSERTA AQUÍ TU SCRIPT DE GOOGLE ADSENSE -->
+      Advertisement
+    </div>
+    <button class="btn-ghost btn-full" id="btnSkipAd" disabled>Wait…</button>
+  </div>
+</div>
+
+<!-- Scripts: CDNs first, then Vault (commons.md), then modules, then app -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="js/crypto-js.min.js"></script>
+<script src="js/vault.js"></script>
+<script src="js/diary.js"></script>
+<script src="js/analyzer.js"></script>
+<script src="js/gemini.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
