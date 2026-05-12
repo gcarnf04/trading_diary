@@ -412,6 +412,8 @@ document.addEventListener('DOMContentLoaded', () => {
     hide($('diaryDetail'));
     show(container);
 
+    renderGlobalStats(entries);
+
     if (!entries.length) {
       container.innerHTML = `<div class="empty-state">
         <svg viewBox="0 0 48 48" fill="none" width="48" height="48"><rect x="8" y="6" width="32" height="36" rx="4" stroke="#94a3b8" stroke-width="2"/><path d="M16 16h16M16 22h16M16 28h10" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -441,6 +443,50 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     html += '</div>';
     container.innerHTML = html;
+  }
+
+  function renderGlobalStats(entries) {
+    const section = $('globalDiaryStats');
+    if (!entries.length) { hide(section); return; }
+    show(section);
+
+    const now = new Date();
+    const oneWeekAgo  = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    let weekPnL  = 0;
+    let monthPnL = 0;
+    let bestDay  = -Infinity;
+    let totalWins = 0;
+    let totalTrades = 0;
+
+    entries.forEach(e => {
+      const eDate = new Date(e.date);
+      const s = e.stats || {};
+      
+      if (eDate >= oneWeekAgo)  weekPnL += s.totalPnL || 0;
+      if (eDate >= oneMonthAgo) monthPnL += s.totalPnL || 0;
+      
+      if ((s.totalPnL || 0) > bestDay) bestDay = s.totalPnL;
+      
+      totalWins += (s.winRate / 100) * s.tradeCount;
+      totalTrades += s.tradeCount;
+    });
+
+    if (bestDay === -Infinity) bestDay = 0;
+    const globalWinRate = totalTrades > 0 ? Math.round((totalWins / totalTrades) * 100) : 0;
+
+    $('globalStatsGrid').innerHTML = [
+      { label: 'Month PnL', value: (monthPnL >= 0 ? '+' : '') + monthPnL.toFixed(2), color: monthPnL >= 0 ? 'green' : 'red' },
+      { label: 'Week PnL',  value: (weekPnL >= 0 ? '+' : '') + weekPnL.toFixed(2),   color: weekPnL >= 0 ? 'green' : 'red' },
+      { label: 'Best Day',  value: '+' + bestDay.toFixed(2), color: 'green' },
+      { label: 'Global Win Rate', value: globalWinRate + '%', color: globalWinRate >= 50 ? 'green' : 'red' }
+    ].map(s => `
+      <div class="stat-card">
+        <div class="stat-value ${s.color}">${s.value}</div>
+        <div class="stat-label">${s.label}</div>
+      </div>
+    `).join('');
   }
 
   window.openDiaryEntry = function(id) {
