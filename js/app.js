@@ -284,6 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (iv) clearInterval(iv);
     hide($('loadingSection'));
   }
+}); // end DOMContentLoaded
 
   /* ── Interstitial Ad ───────────────────────── */
   function showInterstitial(onFinish, skipLabel = 'Continue →') {
@@ -548,7 +549,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ── Bootstrap ─────────────────────────────── */
-  updateKeyUI();
-  renderDiaryList(); // pre-render so it's ready if user switches tab immediately
-
-}); // end DOMContentLoaded
+  // Bootstrap runs after script load
+  document.addEventListener('DOMContentLoaded', () => {
+    updateKeyUI();
+    renderDiaryList(); 
+  });
