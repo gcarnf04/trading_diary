@@ -547,7 +547,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ── Bootstrap ─────────────────────────────── */
-  document.addEventListener('DOMContentLoaded', () => {
-    updateKeyUI();
-    window.renderDiaryList(); 
-  });
+  updateKeyUI();
+  window.renderDiaryList(); 
+}); // end DOMContentLoaded
