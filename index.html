@@ -72,27 +72,41 @@
        TAB: NEW ANALYSIS
   ════════════════════════════════════════════════════════ -->
   <main class="tab-panel active container" id="panelNew">
-    <!-- Quick Guide -->
-    <div class="section-header" style="margin-bottom: 8px;">
-      <span class="section-title" style="font-size: 14px; color: var(--text-2);">How it works</span>
-    </div>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px;">
-      <div class="card" style="padding: 16px; border-style: dashed; opacity: 0.8;">
-        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-bottom: 4px; font-weight: 700;">01. Export</div>
-        <div style="font-size: 13px; color: var(--text-2); line-height: 1.4;">Download your CSV history from MT4, TradingView or your broker.</div>
+    <!-- Quick Guide: Enhanced Flow -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 32px;">
+      
+      <div style="text-align: center;">
+        <div style="width: 44px; height: 44px; background: var(--bg-hover); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; border: 1px solid var(--border); color: var(--accent);">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        </div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--text-1); margin-bottom: 4px;">1. Export</div>
+        <div style="font-size: 11px; color: var(--text-2); line-height: 1.4;">Get your trade history CSV from your broker.</div>
       </div>
-      <div class="card" style="padding: 16px; border-style: dashed; opacity: 0.8;">
-        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-bottom: 4px; font-weight: 700;">02. Map</div>
-        <div style="font-size: 13px; color: var(--text-2); line-height: 1.4;">Drop the file and link the PnL and Price columns to sync stats.</div>
+
+      <div style="text-align: center;">
+        <div style="width: 44px; height: 44px; background: var(--bg-hover); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; border: 1px solid var(--border); color: var(--accent);">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v8M12 2L8 6M12 2l4 4M2 12h20M2 12a10 10 0 0 1 20 0"/></svg>
+        </div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--text-1); margin-bottom: 4px;">2. Sync</div>
+        <div style="font-size: 11px; color: var(--text-2); line-height: 1.4;">Upload file. We auto-detect your columns.</div>
       </div>
-      <div class="card" style="padding: 16px; border-style: dashed; opacity: 0.8;">
-        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-bottom: 4px; font-weight: 700;">03. Reflect</div>
-        <div style="font-size: 13px; color: var(--text-2); line-height: 1.4;">Add your notes. Tell the AI how you actually felt during the trades.</div>
+
+      <div style="text-align: center;">
+        <div style="width: 44px; height: 44px; background: var(--bg-hover); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; border: 1px solid var(--border); color: var(--accent);">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--text-1); margin-bottom: 4px;">3. Reflect</div>
+        <div style="font-size: 11px; color: var(--text-2); line-height: 1.4;">Add notes about your emotions & feelings.</div>
       </div>
-      <div class="card" style="padding: 16px; border-style: dashed; opacity: 0.8;">
-        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-bottom: 4px; font-weight: 700;">04. Audit</div>
-        <div style="font-size: 13px; color: var(--text-2); line-height: 1.4;">Run the analysis to get a brutal psychological debrief.</div>
+
+      <div style="text-align: center;">
+        <div style="width: 44px; height: 44px; background: var(--bg-hover); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; border: 1px solid var(--accent); color: var(--accent); box-shadow: 0 0 10px var(--accent-dim);">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        </div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 4px;">4. Audit</div>
+        <div style="font-size: 11px; color: var(--text-2); line-height: 1.4;">Get your brutal psychological debrief.</div>
       </div>
+
     </div>
 
     <!-- Step 1: CSV Upload -->
